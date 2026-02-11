@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Valentine Ask 💘</title>
+    <style>
+      :root {
+        --bg1: #fff0f6;
+        --bg2: #ffe4ef;
+        --card: rgba(255, 255, 255, 0.9);
+        --text: #5e2d43;
+        --primary: #ff4f87;
+        --primary-dark: #e63974;
+        --secondary: #ffd2e2;
+        --shadow: 0 18px 40px rgba(255, 79, 135, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100svh;
+        font-family: "Avenir Next", "Poppins", "Segoe UI", sans-serif;
+        color: var(--text);
+        background: linear-gradient(160deg, var(--bg1), var(--bg2));
+        display: grid;
+        place-items: center;
+        overflow-x: hidden;
+        position: relative;
+        padding: 18px;
+      }
+
+      .floating-hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      .floating-hearts span {
+        position: absolute;
+        font-size: clamp(16px, 2.8vw, 28px);
+        opacity: 0.22;
+        animation: drift linear infinite;
+      }
+
+      @keyframes drift {
+        from {
+          transform: translateY(105vh) rotate(0deg);
+        }
+        to {
+          transform: translateY(-16vh) rotate(25deg);
+        }
+      }
+
+      .card {
+        width: min(720px, 100%);
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: var(--shadow);
+        border-radius: 28px;
+        padding: 22px;
+        backdrop-filter: blur(8px);
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      @media (min-width: 768px) {
+        .card {
+          padding: 34px;
+        }
+      }
+
+      h1 {
+        margin: 10px 0 8px;
+        font-size: clamp(1.8rem, 4.5vw, 3rem);
+        line-height: 1.1;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0 0 14px;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+      }
+
+      .image-wrap {
+        display: grid;
+        place-items: center;
+        margin-bottom: 14px;
+      }
+
+      #photo {
+        width: min(100%, 320px);
+        max-height: 240px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+        display: none;
+      }
+
+      @media (min-width: 768px) {
+        #photo {
+          width: min(100%, 420px);
+          max-height: 320px;
+        }
+      }
+
+      #fallbackArt {
+        width: min(100%, 320px);
+        aspect-ratio: 4 / 3;
+        border-radius: 20px;
+        background: radial-gradient(circle at 25% 20%, #ffe6f0, #ffd2e2 55%, #ffc2d8);
+        display: grid;
+        place-items: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      @media (min-width: 768px) {
+        #fallbackArt {
+          width: min(100%, 420px);
+        }
+      }
+
+      .helper {
+        margin: 12px auto 2px;
+        width: min(420px, 100%);
+      }
+
+      .helper label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.88rem;
+        font-weight: 600;
+      }
+
+      .helper input {
+        width: 100%;
+        border: 2px solid #ffd0df;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .helper input:focus {
+        border-color: #ff77a7;
+        box-shadow: 0 0 0 4px rgba(255, 119, 167, 0.18);
+      }
+
+      .error {
+        color: #cf3269;
+        min-height: 1.1em;
+        font-size: 0.83rem;
+        margin-top: 5px;
+      }
+
+      .buttons {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        min-height: 58px;
+        position: relative;
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 22px;
+        font-size: 1.02rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.24s ease, opacity 0.24s ease, background 0.2s ease;
+        touch-action: manipulation;
+      }
+
+      #yesBtn {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(255, 79, 135, 0.35);
+      }
+
+      #yesBtn:hover {
+        background: var(--primary-dark);
+      }
+
+      #noBtn {
+        background: var(--secondary);
+        color: #732544;
+      }
+
+      .pulse {
+        animation: pulse 0.45s ease;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(var(--yes-scale, 1)); }
+        40% { transform: scale(calc(var(--yes-scale, 1) * 1.08)); }
+        100% { transform: scale(var(--yes-scale, 1)); }
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .center {
+        text-align: center;
+      }
+
+      #successScreen {
+        text-align: center;
+      }
+
+      .success-actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .soft-btn {
+        background: #fff;
+        color: var(--text);
+        border: 2px solid #ffbdd3;
+      }
+
+      #confettiCanvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="confettiCanvas" class="hidden"></canvas>
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <main class="card">
+      <section id="questionScreen" class="center">
+        <div class="image-wrap">
+          <img id="photo" alt="Valentine photo" />
+          <div id="fallbackArt" aria-label="Cute valentine illustration">
+            <svg width="90%" height="90%" viewBox="0 0 400 300" role="img" aria-label="Cute hearts and teddy">
+              <circle cx="90" cy="80" r="30" fill="#ff89b1" />
+              <circle cx="130" cy="80" r="30" fill="#ff89b1" />
+              <path d="M90 98 L110 125 L130 98" fill="#ff89b1" />
+              <circle cx="280" cy="70" r="22" fill="#ffc1d8" />
+              <circle cx="305" cy="70" r="22" fill="#ffc1d8" />
+              <path d="M280 84 L292 102 L305 84" fill="#ffc1d8" />
+              <ellipse cx="200" cy="170" rx="74" ry="64" fill="#f9d6b0" />
+              <circle cx="170" cy="130" r="24" fill="#f9d6b0" />
+              <circle cx="230" cy="130" r="24" fill="#f9d6b0" />
+              <circle cx="170" cy="130" r="10" fill="#e8b48a" />
+              <circle cx="230" cy="130" r="10" fill="#e8b48a" />
+              <circle cx="185" cy="165" r="5" fill="#633a34" />
+              <circle cx="215" cy="165" r="5" fill="#633a34" />
+              <ellipse cx="200" cy="182" rx="15" ry="12" fill="#633a34" />
+              <path d="M177 200 Q200 220 223 200" stroke="#633a34" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="helper">
+          <label for="imgInput">Want to add a photo? Paste an Imgur direct image link</label>
+          <input id="imgInput" type="url" inputmode="url" placeholder="https://i.imgur.com/example.jpg" />
+          <div id="imgError" class="error"></div>
+        </div>
+
+        <h1 id="heyLine">Hey there 💌</h1>
+        <p id="fromLine"></p>
+        <h2>Will you be my Valentine?</h2>
+
+        <div class="buttons" id="buttonArea">
+          <button id="yesBtn">YES 💖</button>
+          <button id="noBtn">No…</button>
+        </div>
+      </section>
+
+      <section id="successScreen" class="hidden">
+        <h1>YAYYYY!!! 🎉💘</h1>
+        <p id="msgLine"></p>
+        <p id="loveLine"></p>
+        <div class="success-actions">
+          <button id="replayBtn" class="soft-btn">Replay</button>
+          <button id="copyBtn" class="soft-btn">Copy Link</button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const data = {
+        from: params.get("from") || "Someone",
+        to: params.get("to") || "Cutie",
+        msg: params.get("msg") || "",
+        img: params.get("img") || ""
+      };
+
+      const noLabels = [
+        "Are you sure? 🥺",
+        "Like… 100% sure?",
+        "That hurts a lil 😭",
+        "Don’t do me like that…",
+        "I made this just for you 😔",
+        "Last chance…",
+        "What if I say please? 😇",
+        "C’monnn 😩",
+        "You’re really gonna say no??",
+        "Okay… YES"
+      ];
+
+      const heyLine = document.getElementById("heyLine");
+      const fromLine = document.getElementById("fromLine");
+      const msgLine = document.getElementById("msgLine");
+      const loveLine = document.getElementById("loveLine");
+      const questionScreen = document.getElementById("questionScreen");
+      const successScreen = document.getElementById("successScreen");
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+      const buttonArea = document.getElementById("buttonArea");
+      const photo = document.getElementById("photo");
+      const fallbackArt = document.getElementById("fallbackArt");
+      const imgInput = document.getElementById("imgInput");
+      const imgError = document.getElementById("imgError");
+      const replayBtn = document.getElementById("replayBtn");
+      const copyBtn = document.getElementById("copyBtn");
+      const confettiCanvas = document.getElementById("confettiCanvas");
+      const ctx = confettiCanvas.getContext("2d");
+
+      let noClickCount = 0;
+      let yesScale = 1;
+      let confettiFrame = null;
+      let particles = [];
+
+      heyLine.textContent = `Hey, ${data.to} 💌`;
+      fromLine.textContent = `${data.from} has something to ask you…`;
+      msgLine.textContent = data.msg;
+      loveLine.textContent = `Love, ${data.from}`;
+      if (!data.msg) msgLine.classList.add("hidden");
+
+      function isValidImageUrl(url) {
+        return /^https?:\/\/.+\.(jpg|jpeg|png|webp)(\?.*)?$/i.test(url.trim());
+      }
+
+      function setImage(url) {
+        const trimmed = (url || "").trim();
+        data.img = trimmed;
+        if (!trimmed) {
+          photo.classList.add("hidden");
+          fallbackArt.classList.remove("hidden");
+          return;
+        }
+
+        if (!isValidImageUrl(trimmed)) {
+          imgError.textContent = "Use a direct image link ending in .jpg/.png/.webp";
+          photo.classList.add("hidden");
+          fallbackArt.classList.remove("hidden");
+          return;
+        }
+
+        imgError.textContent = "";
+        photo.onload = () => {
+          photo.classList.remove("hidden");
+          fallbackArt.classList.add("hidden");
+        };
+        photo.onerror = () => {
+          photo.classList.add("hidden");
+          fallbackArt.classList.remove("hidden");
+        };
+        photo.src = trimmed;
+      }
+
+      function updateUrlParamImg(nextImg) {
+        const url = new URL(window.location.href);
+        if (nextImg) {
+          url.searchParams.set("img", nextImg);
+        } else {
+          url.searchParams.delete("img");
+        }
+        history.replaceState({}, "", url.toString());
+      }
+
+      function randomizeNoButton() {
+        const areaRect = buttonArea.getBoundingClientRect();
+        const cardRect = document.querySelector(".card").getBoundingClientRect();
+        const maxX = cardRect.width - noBtn.offsetWidth - 14;
+        const maxY = 120;
+        const x = Math.max(8, Math.random() * maxX);
+        const y = Math.random() * maxY;
+        noBtn.style.position = "absolute";
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+        buttonArea.style.minHeight = `${Math.max(areaRect.height + 120, 180)}px`;
+      }
+
+      function growYes() {
+        yesScale *= 1.12;
+        yesBtn.style.setProperty("--yes-scale", yesScale.toFixed(3));
+        yesBtn.style.transform = `scale(${yesScale})`;
+        yesBtn.classList.remove("pulse");
+        void yesBtn.offsetWidth;
+        yesBtn.classList.add("pulse");
+        noBtn.style.transform = `scale(${Math.max(0.45, 1 - noClickCount * 0.05).toFixed(2)})`;
+      }
+
+      function goSuccess() {
+        questionScreen.classList.add("hidden");
+        successScreen.classList.remove("hidden");
+        startConfetti();
+      }
+
+      function resetGame() {
+        noClickCount = 0;
+        yesScale = 1;
+        yesBtn.style.transform = "scale(1)";
+        noBtn.textContent = "No…";
+        noBtn.style.position = "static";
+        noBtn.style.left = "";
+        noBtn.style.top = "";
+        noBtn.style.transform = "scale(1)";
+        buttonArea.style.minHeight = "58px";
+        successScreen.classList.add("hidden");
+        questionScreen.classList.remove("hidden");
+      }
+
+      function spawnParticles() {
+        const colors = ["#ff4f87", "#ffa3c2", "#ffd166", "#f95d9b", "#ffffff"];
+        particles = Array.from({ length: 140 }, () => ({
+          x: Math.random() * confettiCanvas.width,
+          y: -Math.random() * confettiCanvas.height,
+          vx: (Math.random() - 0.5) * 2,
+          vy: 1.5 + Math.random() * 2.8,
+          size: 6 + Math.random() * 8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          shape: Math.random() > 0.5 ? "heart" : "dot",
+          rot: Math.random() * Math.PI
+        }));
+      }
+
+      function drawHeart(x, y, s, color) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(s / 12, s / 12);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(0, 4);
+        ctx.bezierCurveTo(0, -2, -8, -2, -8, 4);
+        ctx.bezierCurveTo(-8, 10, 0, 14, 0, 20);
+        ctx.bezierCurveTo(0, 14, 8, 10, 8, 4);
+        ctx.bezierCurveTo(8, -2, 0, -2, 0, 4);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function animateConfetti() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += 0.03;
+          if (p.shape === "heart") {
+            drawHeart(p.x, p.y, p.size, p.color);
+          } else {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        confettiFrame = requestAnimationFrame(animateConfetti);
+      }
+
+      function startConfetti() {
+        confettiCanvas.classList.remove("hidden");
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+        spawnParticles();
+        animateConfetti();
+        setTimeout(() => {
+          cancelAnimationFrame(confettiFrame);
+          confettiCanvas.classList.add("hidden");
+          ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }, 4200);
+      }
+
+      yesBtn.addEventListener("click", goSuccess);
+
+      noBtn.addEventListener("click", () => {
+        if (noClickCount >= noLabels.length - 1) {
+          goSuccess();
+          return;
+        }
+        noBtn.textContent = noLabels[noClickCount];
+        noClickCount += 1;
+        growYes();
+        randomizeNoButton();
+      });
+
+      replayBtn.addEventListener("click", resetGame);
+
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          copyBtn.textContent = "Copied! 💗";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy Link";
+          }, 1300);
+        } catch {
+          copyBtn.textContent = "Copy failed";
+        }
+      });
+
+      imgInput.addEventListener("input", (e) => {
+        const val = e.target.value.trim();
+        if (val && !isValidImageUrl(val)) {
+          imgError.textContent = "Use a direct image link ending in .jpg/.png/.webp";
+        } else {
+          imgError.textContent = "";
+        }
+      });
+
+      imgInput.addEventListener("change", (e) => {
+        const val = e.target.value.trim();
+        if (val && !isValidImageUrl(val)) {
+          setImage("");
+          return;
+        }
+        updateUrlParamImg(val);
+        setImage(val);
+      });
+
+      window.addEventListener("resize", () => {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+      });
+
+      (function initHearts() {
+        const container = document.getElementById("floatingHearts");
+        for (let i = 0; i < 14; i += 1) {
+          const span = document.createElement("span");
+          span.textContent = Math.random() > 0.5 ? "💖" : "💘";
+          span.style.left = `${Math.random() * 100}%`;
+          span.style.animationDuration = `${8 + Math.random() * 10}s`;
+          span.style.animationDelay = `${Math.random() * 6}s`;
+          container.appendChild(span);
+        }
+      })();
+
+      imgInput.value = data.img;
+      setImage(data.img);
+    </script>
+  </body>
+</html>
