@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine 💘</title>
+  <style>
+    :root {
+      --bg-1: #fff0f6;
+      --bg-2: #ffe4ec;
+      --card: #ffffffee;
+      --pink: #ff4f8a;
+      --pink-dark: #e03d75;
+      --accent: #ff8db3;
+      --text: #3e2430;
+      --muted: #7a5a66;
+      --success: #1a8f55;
+      --danger: #a61e4d;
+      --shadow: 0 16px 40px rgba(255, 79, 138, 0.2);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      font-family: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, #ffd8e6 0%, transparent 35%),
+        radial-gradient(circle at 85% 10%, #ffd3e8 0%, transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      padding: 20px;
+    }
+
+    .card {
+      width: min(100%, 700px);
+      background: var(--card);
+      border: 1px solid #fff;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 700px) {
+      .card { padding: 28px; }
+    }
+
+    .top {
+      text-align: center;
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-wrap {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+    }
+
+    .hero,
+    .fallback-hero {
+      width: min(100%, 320px);
+      max-height: 240px;
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(30, 10, 20, 0.2);
+      border: 2px solid #fff;
+      background: #fff;
+    }
+
+    .fallback-hero {
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: linear-gradient(135deg, #ffd8e6, #fff2f7);
+    }
+
+    @media (min-width: 700px) {
+      .hero,
+      .fallback-hero {
+        width: min(100%, 420px);
+        max-height: 320px;
+      }
+    }
+
+    h1 {
+      margin: 4px 0 0;
+      font-size: clamp(1.55rem, 3.8vw, 2rem);
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .main-q {
+      margin: 4px 0 0;
+      font-size: clamp(1.2rem, 3vw, 1.55rem);
+      font-weight: 700;
+    }
+
+    .img-helper {
+      margin-top: 8px;
+      width: min(100%, 520px);
+      text-align: left;
+      background: #fff7fa;
+      border: 1px solid #ffd2e3;
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .img-helper label {
+      color: #7a4059;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .helper-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .img-helper input {
+      width: 100%;
+      border: 1px solid #f2b7cb;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 0.92rem;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 200ms ease, background 200ms ease, opacity 200ms ease;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .apply-btn,
+    .minor-btn {
+      background: #ffe0ec;
+      color: #7a2146;
+      border: 1px solid #f3a7c3;
+    }
+
+    .apply-btn:hover,
+    .minor-btn:hover { background: #ffd1e2; }
+
+    .err {
+      min-height: 1.1em;
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--danger);
+    }
+
+    .arena {
+      margin-top: 20px;
+      border: 1px dashed #f6b0cb;
+      background: #fff7fb;
+      border-radius: 16px;
+      min-height: 220px;
+      position: relative;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .btn-layer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .yes,
+    .no {
+      position: absolute;
+      transform-origin: center center;
+      min-width: 96px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .yes {
+      left: 22%;
+      top: 58%;
+      transform: translate(-50%, -50%) scale(var(--yes-scale, 1));
+      background: linear-gradient(180deg, var(--pink), var(--pink-dark));
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(224, 61, 117, 0.35);
+      z-index: 2;
+    }
+
+    .yes.pulse {
+      animation: pulse 420ms ease;
+    }
+
+    .no {
+      left: 75%;
+      top: 58%;
+      transform: translate(-50%, -50%) scale(var(--no-scale, 1));
+      background: #fff;
+      color: #8b224f;
+      border: 1px solid #f3a7c3;
+      z-index: 1;
+      white-space: nowrap;
+      max-width: min(88vw, 320px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 420px) {
+      .yes,
+      .no { font-size: 0.94rem; }
+    }
+
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(calc(var(--yes-scale, 1) * 1)); }
+      45% { transform: translate(-50%, -50%) scale(calc(var(--yes-scale, 1) * 1.11)); }
+      100% { transform: translate(-50%, -50%) scale(calc(var(--yes-scale, 1) * 1)); }
+    }
+
+    .success {
+      text-align: center;
+      display: none;
+      gap: 12px;
+      justify-items: center;
+      padding: 8px 4px 2px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .success.show {
+      display: grid;
+    }
+
+    .yay {
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin: 4px 0;
+    }
+
+    .msg {
+      margin: 0;
+      color: #5b3244;
+      font-size: 1.05rem;
+      max-width: 44ch;
+    }
+
+    .love {
+      margin: 0;
+      font-style: italic;
+      color: #7a4059;
+    }
+
+    .actions {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .copy-wrap {
+      width: min(100%, 500px);
+      display: grid;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .copy-wrap input {
+      width: 100%;
+      border-radius: 9px;
+      border: 1px solid #f2b7cb;
+      padding: 9px 10px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .hint {
+      min-height: 1.1em;
+      margin: 0;
+      color: #7a4059;
+      font-size: 0.88rem;
+    }
+
+    #fxCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100svh;
+      pointer-events: none;
+      z-index: 20;
+      display: none;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
+
+  <main class="card" role="main" aria-live="polite">
+    <section id="askView">
+      <div class="top">
+        <div class="hero-wrap">
+          <img id="heroImg" class="hero hidden" alt="A sweet Valentine image" />
+          <div id="fallbackHero" class="fallback-hero" aria-hidden="true">
+            <svg viewBox="0 0 400 280" width="100%" height="100%" aria-hidden="true">
+              <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ff8eb3" />
+                  <stop offset="100%" stop-color="#ff4f8a" />
+                </linearGradient>
+              </defs>
+              <rect width="400" height="280" rx="24" fill="#fff3f8"/>
+              <g fill="url(#g)">
+                <path d="M100 120c-28-30-76 10-34 54l74 66 74-66c43-44-5-84-34-54-14 14-25 22-40 37-15-15-26-23-40-37z"/>
+                <circle cx="300" cy="66" r="18" opacity="0.9"/>
+                <circle cx="332" cy="92" r="11" opacity="0.8"/>
+                <circle cx="72" cy="74" r="14" opacity="0.85"/>
+              </g>
+              <text x="200" y="260" text-anchor="middle" fill="#8b3b5f" font-size="18" font-family="Arial, sans-serif">Made with 💘 just for you</text>
+            </svg>
+          </div>
+
+          <div class="img-helper">
+            <label for="imgInput">Paste an Imgur direct image link (ends in .jpg/.png/.webp)</label>
+            <div class="helper-row">
+              <input id="imgInput" type="text" placeholder="https://i.imgur.com/example.jpg" />
+              <button id="applyImg" class="apply-btn" type="button">Apply</button>
+            </div>
+            <p id="imgErr" class="err" role="status"></p>
+          </div>
+        </div>
+
+        <h1 id="title">Hey there 💌</h1>
+        <p id="sub" class="sub">Someone has something to ask you…</p>
+        <p class="main-q">Will you be my Valentine?</p>
+      </div>
+
+      <div id="arena" class="arena" aria-label="Valentine response buttons area">
+        <div class="btn-layer" id="btnLayer">
+          <button id="yesBtn" class="yes" type="button">YES 💖</button>
+          <button id="noBtn" class="no" type="button">NO 🙈</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="successView" class="success" aria-live="assertive">
+      <h2 class="yay">YAYYYY!!! 🎉💘</h2>
+      <p id="msgOut" class="msg"></p>
+      <p id="loveOut" class="love"></p>
+
+      <div class="actions">
+        <button id="replayBtn" class="minor-btn" type="button">Replay</button>
+        <button id="copyBtn" class="minor-btn" type="button">Copy Link</button>
+      </div>
+
+      <div class="copy-wrap">
+        <input id="copyFallback" type="text" readonly />
+        <p id="copyHint" class="hint" role="status"></p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const state = {
+        to: (params.get("to") || "there").trim(),
+        from: (params.get("from") || "Someone").trim(),
+        msg: (params.get("msg") || "").trim(),
+        img: (params.get("img") || "").trim(),
+        noClicks: 0,
+        yesScale: 1,
+        noScale: 1,
+        accepted: false,
+      };
+
+      const noLabels = [
+        "Are you sure? 🥺",
+        "Like… 100% sure?",
+        "That hurts a lil 😭",
+        "Don’t do me like that…",
+        "I made this just for you 😔",
+        "Last chance…",
+        "What if I say please? 😇",
+        "C’monnn 😩",
+        "You’re really gonna say no??",
+        "Okay… YES",
+      ];
+
+      const askView = document.getElementById("askView");
+      const successView = document.getElementById("successView");
+      const titleEl = document.getElementById("title");
+      const subEl = document.getElementById("sub");
+      const msgOut = document.getElementById("msgOut");
+      const loveOut = document.getElementById("loveOut");
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+      const arena = document.getElementById("arena");
+      const heroImg = document.getElementById("heroImg");
+      const fallbackHero = document.getElementById("fallbackHero");
+      const imgInput = document.getElementById("imgInput");
+      const applyImgBtn = document.getElementById("applyImg");
+      const imgErr = document.getElementById("imgErr");
+      const replayBtn = document.getElementById("replayBtn");
+      const copyBtn = document.getElementById("copyBtn");
+      const copyFallback = document.getElementById("copyFallback");
+      const copyHint = document.getElementById("copyHint");
+      const fxCanvas = document.getElementById("fxCanvas");
+
+      titleEl.textContent = `Hey, ${state.to} 💌`;
+      subEl.textContent = `${state.from} has something to ask you…`;
+      msgOut.textContent = state.msg || "You just made my whole day 💞";
+      loveOut.textContent = `Love, ${state.from}`;
+      imgInput.value = state.img;
+
+      function isValidDirectImage(url) {
+        return /^https?:\/\/.+\.(?:jpg|jpeg|png|webp)(?:[?#].*)?$/i.test(url.trim());
+      }
+
+      function setImageFromUrl(url) {
+        const clean = (url || "").trim();
+        imgErr.textContent = "";
+
+        if (!clean) {
+          heroImg.classList.add("hidden");
+          fallbackHero.classList.remove("hidden");
+          return;
+        }
+
+        if (!isValidDirectImage(clean)) {
+          heroImg.classList.add("hidden");
+          fallbackHero.classList.remove("hidden");
+          imgErr.textContent = "Use a direct image link ending in .jpg/.png/.webp";
+          return;
+        }
+
+        heroImg.onload = () => {
+          fallbackHero.classList.add("hidden");
+          heroImg.classList.remove("hidden");
+        };
+
+        heroImg.onerror = () => {
+          heroImg.classList.add("hidden");
+          fallbackHero.classList.remove("hidden");
+          imgErr.textContent = "Couldn’t load that image. Try another direct link.";
+        };
+
+        heroImg.src = clean;
+      }
+
+      function moveNoButton() {
+        const arenaRect = arena.getBoundingClientRect();
+        const noRect = noBtn.getBoundingClientRect();
+
+        const pad = 10;
+        const maxX = Math.max(pad, arenaRect.width - noRect.width - pad);
+        const maxY = Math.max(pad, arenaRect.height - noRect.height - pad);
+
+        const x = pad + Math.random() * (maxX - pad);
+        const y = pad + Math.random() * (maxY - pad);
+
+        noBtn.style.left = `${x + noRect.width / 2}px`;
+        noBtn.style.top = `${y + noRect.height / 2}px`;
+      }
+
+      function bumpYesAndShrinkNo() {
+        state.yesScale = Math.min(state.yesScale * 1.12, 3.5);
+        state.noScale = Math.max(state.noScale * 0.93, 0.5);
+        yesBtn.style.setProperty("--yes-scale", state.yesScale.toFixed(3));
+        noBtn.style.setProperty("--no-scale", state.noScale.toFixed(3));
+
+        yesBtn.classList.remove("pulse");
+        void yesBtn.offsetWidth;
+        yesBtn.classList.add("pulse");
+      }
+
+      function acceptLove() {
+        if (state.accepted) return;
+        state.accepted = true;
+        askView.classList.add("hidden");
+        successView.classList.add("show");
+        runHeartFireworks(4200);
+      }
+
+      function resetGame() {
+        state.noClicks = 0;
+        state.yesScale = 1;
+        state.noScale = 1;
+        state.accepted = false;
+        yesBtn.style.setProperty("--yes-scale", "1");
+        noBtn.style.setProperty("--no-scale", "1");
+        noBtn.textContent = "NO 🙈";
+        noBtn.style.left = "75%";
+        noBtn.style.top = "58%";
+        askView.classList.remove("hidden");
+        successView.classList.remove("show");
+        copyHint.textContent = "";
+        copyFallback.style.display = "none";
+      }
+
+      function currentShareUrl() {
+        const u = new URL(window.location.href);
+        if (!u.searchParams.get("to")) u.searchParams.set("to", state.to);
+        if (!u.searchParams.get("from")) u.searchParams.set("from", state.from);
+        if (state.msg) u.searchParams.set("msg", state.msg);
+        if (state.img) u.searchParams.set("img", state.img);
+        return u.toString();
+      }
+
+      async function copyLink() {
+        const shareUrl = currentShareUrl();
+        copyHint.textContent = "";
+        copyFallback.value = shareUrl;
+
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          copyHint.textContent = "Copied! Share the love 💌";
+          copyFallback.style.display = "none";
+        } catch (_) {
+          copyHint.textContent = "If copy doesn’t work, select and copy this link.";
+          copyFallback.style.display = "block";
+          copyFallback.focus();
+          copyFallback.select();
+        }
+      }
+
+      function applyImageParam() {
+        const url = imgInput.value.trim();
+        if (url && !isValidDirectImage(url)) {
+          imgErr.textContent = "Use a direct image link ending in .jpg/.png/.webp";
+          return;
+        }
+
+        state.img = url;
+        const next = new URL(window.location.href);
+        if (url) next.searchParams.set("img", url);
+        else next.searchParams.delete("img");
+
+        history.replaceState(null, "", next.toString());
+        setImageFromUrl(url);
+      }
+
+      yesBtn.addEventListener("click", acceptLove);
+
+      noBtn.addEventListener("click", () => {
+        state.noClicks += 1;
+        bumpYesAndShrinkNo();
+
+        const idx = Math.min(state.noClicks, noLabels.length) - 1;
+        if (idx >= 0) noBtn.textContent = noLabels[idx];
+        moveNoButton();
+
+        if (state.noClicks >= noLabels.length) {
+          noBtn.textContent = "Okay fine... YES 💖";
+          acceptLove();
+        }
+      });
+
+      replayBtn.addEventListener("click", resetGame);
+      copyBtn.addEventListener("click", copyLink);
+      applyImgBtn.addEventListener("click", applyImageParam);
+      imgInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") applyImageParam();
+      });
+
+      window.addEventListener("resize", () => {
+        if (!state.accepted && state.noClicks > 0) moveNoButton();
+      });
+
+      setImageFromUrl(state.img);
+
+      function runHeartFireworks(durationMs = 4000) {
+        const ctx = fxCanvas.getContext("2d");
+        if (!ctx) return;
+
+        fxCanvas.style.display = "block";
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const w = Math.floor(window.innerWidth);
+        const h = Math.floor(window.innerHeight);
+        fxCanvas.width = Math.floor(w * dpr);
+        fxCanvas.height = Math.floor(h * dpr);
+        ctx.scale(dpr, dpr);
+
+        const particles = [];
+        const colors = ["#ff4f8a", "#ff7fa8", "#ffd166", "#ff5c8d", "#ff92b7"];
+
+        function makeBurst() {
+          const cx = Math.random() * (w * 0.8) + w * 0.1;
+          const cy = Math.random() * (h * 0.5) + h * 0.1;
+          const n = 40 + Math.floor(Math.random() * 26);
+
+          for (let i = 0; i < n; i++) {
+            const angle = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+            const speed = 1.2 + Math.random() * 3.4;
+            particles.push({
+              x: cx,
+              y: cy,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              life: 80 + Math.random() * 40,
+              age: 0,
+              size: 7 + Math.random() * 8,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              rot: Math.random() * Math.PI,
+            });
+          }
+        }
+
+        function drawHeart(x, y, size, color, rot, alpha = 1) {
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(rot);
+          ctx.scale(size / 18, size / 18);
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(0, 6);
+          ctx.bezierCurveTo(0, 0, -10, 0, -10, 8);
+          ctx.bezierCurveTo(-10, 14, -3, 18, 0, 22);
+          ctx.bezierCurveTo(3, 18, 10, 14, 10, 8);
+          ctx.bezierCurveTo(10, 0, 0, 0, 0, 6);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        makeBurst();
+        const burstInterval = setInterval(makeBurst, 520);
+        const start = performance.now();
+
+        function tick(now) {
+          const elapsed = now - start;
+          ctx.clearRect(0, 0, w, h);
+
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.age += 1;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.03;
+            p.vx *= 0.995;
+            p.rot += 0.03;
+
+            const alpha = Math.max(0, 1 - p.age / p.life);
+            drawHeart(p.x, p.y, p.size, p.color, p.rot, alpha);
+
+            if (p.age >= p.life) particles.splice(i, 1);
+          }
+
+          if (elapsed < durationMs || particles.length > 0) {
+            requestAnimationFrame(tick);
+          } else {
+            clearInterval(burstInterval);
+            fxCanvas.style.display = "none";
+            ctx.clearRect(0, 0, w, h);
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+    })();
+  </script>
+</body>
+</html>
